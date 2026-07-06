@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma";
-import { IRegisterUserPayload } from "./auth.interface";
+import { ILoginUserPayload, IRegisterUserPayload } from "./auth.interface";
 import config from "../../config";
 
 const registerUser = async (payload: IRegisterUserPayload) => {
@@ -46,6 +46,31 @@ const registerUser = async (payload: IRegisterUserPayload) => {
   return user;
 };
 
+const loginUser = async (payload: ILoginUserPayload) => {
+  const { email, password } = payload;
+
+  const user = await prisma.user.findUnique({
+    where: { email }
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  if (user?.status === "SUSPENDED") {
+    throw new Error("Your account has been suspended");
+  }
+
+  const isPasswordMatched = await bcrypt.compare(password, user?.password as string);
+
+  if (!isPasswordMatched) {
+    throw new Error("Incorrect password");
+  }
+
+  return user;
+};
+
 export const authService = {
   registerUser,
+  loginUser,
 };
