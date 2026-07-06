@@ -7,6 +7,7 @@ model RentalOrder {
 
     startTime  DateTime
     endTime    DateTime
+    quantity   Int         @default(1)
     totalPrice Int
     status     OrderStatus @default(PLACED)
 

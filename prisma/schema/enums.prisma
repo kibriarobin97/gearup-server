@@ -10,10 +10,10 @@ enum UserStatus {
 }
 
 enum OrderStatus {
-  PLACED
-  CONFIRMED
-  PAID
-  PICKED_UP
-  RETURNED
-  CANCELLED
+    PLACED
+    CONFIRMED
+    PAID
+    PICKED_UP
+    RETURNED
+    CANCELLED
 }
