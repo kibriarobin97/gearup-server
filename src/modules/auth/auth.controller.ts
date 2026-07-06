@@ -42,7 +42,21 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getMyProfile = catchAsync(
+  async (req: Request, res: Response) => {
+    const profile = await authService.getMyProfile(req.user!.id as string);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "User profile fetched successfully",
+      data: { profile },
+    });
+  },
+);
+
 export const authController = {
   registerUser,
   loginUser,
+  getMyProfile,
 };
