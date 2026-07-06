@@ -4,8 +4,14 @@ import { ILoginUserPayload, IRegisterUserPayload } from "./auth.interface";
 import config from "../../config";
 import { jwtUtils } from "../../utils/jwt";
 import { SignOptions } from "jsonwebtoken";
+import { validateUser } from "../../utils/validate";
 
 const registerUser = async (payload: IRegisterUserPayload) => {
+  const validationError = validateUser(payload);
+  if (validationError) {
+    throw new Error(validationError);
+  }
+
   const { name, email, password, profilePhoto, role } = payload;
 
   const isUserExists = await prisma.user.findUnique({
@@ -21,12 +27,14 @@ const registerUser = async (payload: IRegisterUserPayload) => {
     Number(config.BCRYPT_SALT_ROUNDS),
   );
 
+  const userRole = role || "CUSTOMER";
+
   const createdUser = await prisma.user.create({
     data: {
       name,
       email,
       password: hashPassword,
-      role: role === "ADMIN" ? "CUSTOMER" : role || "CUSTOMER",
+      role: userRole,
       profile: {
         create: {
           profilePhoto,
@@ -56,7 +64,7 @@ const loginUser = async (payload: ILoginUserPayload) => {
   });
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error("User does not exist");
   }
 
   if (user?.status === "SUSPENDED") {
