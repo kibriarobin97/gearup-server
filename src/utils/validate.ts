@@ -1,5 +1,5 @@
-export const validateUser = (payload: any) => {
-  const { name, email, password, role } = payload;
+export const validateRegister = (payload: any) => {
+  const { email, password, role } = payload;
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email || !emailRegex.test(email)) {
@@ -17,6 +17,21 @@ export const validateUser = (payload: any) => {
     if (role !== "CUSTOMER" && role !== "PROVIDER") {
       return "Invalid role. Role must be either CUSTOMER or PROVIDER.";
     }
+  }
+
+  return null;
+};
+
+export const validateLogin = (payload: any) => {
+  const { email, password } = payload;
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email)) {
+    return "Invalid email format.";
+  }
+
+  if (!password) {
+    return "Password is required.";
   }
 
   return null;

@@ -3,11 +3,10 @@ import { prisma } from "../../lib/prisma";
 import { ILoginUserPayload, IRegisterUserPayload } from "./auth.interface";
 import config from "../../config";
 import { jwtUtils } from "../../utils/jwt";
-import { SignOptions } from "jsonwebtoken";
-import { validateUser } from "../../utils/validate";
+import { validateLogin, validateRegister } from "../../utils/validate";
 
 const registerUser = async (payload: IRegisterUserPayload) => {
-  const validationError = validateUser(payload);
+  const validationError = validateRegister(payload);
   if (validationError) {
     throw new Error(validationError);
   }
@@ -57,6 +56,11 @@ const registerUser = async (payload: IRegisterUserPayload) => {
 };
 
 const loginUser = async (payload: ILoginUserPayload) => {
+  const validationError = validateLogin(payload);
+  if (validationError) {
+    throw new Error(validationError);
+  }
+
   const { email, password } = payload;
 
   const user = await prisma.user.findUnique({
@@ -90,13 +94,13 @@ const loginUser = async (payload: ILoginUserPayload) => {
   const accessToken = jwtUtils.createToken(
     jwtPayload,
     config.JWT_ACCESS_SECRET,
-    config.JWT_ACCESS_EXPIRATION as SignOptions,
+    config.JWT_ACCESS_EXPIRATION,
   );
 
   const refreshToken = jwtUtils.createToken(
     jwtPayload,
     config.JWT_REFRESH_SECRET,
-    config.JWT_REFRESH_EXPIRATION as SignOptions,
+    config.JWT_REFRESH_EXPIRATION,
   );
 
   return {

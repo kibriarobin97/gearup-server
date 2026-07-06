@@ -3,6 +3,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import { authService } from "./auth.service";
 import httpStatus from "http-status";
 import { sendResponse } from "../../utils/sendResponse";
+import config from "../../config";
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
@@ -20,17 +21,19 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 
   const { accessToken, refreshToken } = await authService.loginUser(payload);
 
+  const isProduction = config.NODE_ENV === "production";
+
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    secure: false,
-    sameSite: "none",
+    secure: isProduction,
+    sameSite:  isProduction ? "none" : "lax",
     maxAge: 1000 * 60 * 60 * 24, // 1 day
   });
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: false,
-    sameSite: "none",
+    secure: isProduction,
+    sameSite:  isProduction ? "none" : "lax",
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
   });
 

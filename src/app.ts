@@ -3,6 +3,9 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import config from "./config";
 import { authRoutes } from "./modules/auth/auth.route";
+import { globalErrorHandler } from "./middleware/globalErrorHandler";
+import { notFound } from "./middleware/notFound";
+import { categoriesRoutes } from "./modules/categories/categories.route";
 
 const app: Application = express();
 
@@ -21,6 +24,12 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Gearup server is running");
 });
 
-app.use("/api/auth/", authRoutes);
+app.use("/api/auth", authRoutes);
+
+app.use("/api/categories", categoriesRoutes);
+
+
+app.use(notFound);
+app.use(globalErrorHandler);
 
 export default app;
