@@ -1,11 +1,13 @@
 model GearItem {
-    id             String  @id @default(uuid())
-    name           String
-    description    String
-    pricePerDay    Int
-    isAvailable    Boolean @default(true)
-    brand          String?
-    model          String?
+    id          String  @id @default(uuid())
+    name        String
+    description String
+    pricePerDay Int
+    brand       String?
+    model       String?
+
+    totalStock     Int @default(1)
+    availableCount Int @default(1)
 
     categoryId String
     category   Category @relation(fields: [categoryId], references: [id])

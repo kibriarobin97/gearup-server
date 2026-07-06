@@ -7,6 +7,11 @@ model User {
     role     UserRole   @default(CUSTOMER)
     status   UserStatus @default(ACTIVE)
 
+    profile  Profile?
+    reviews   Review[]
+    gearItems GearItem[]
+    orders    RentalOrder[]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
