@@ -6,6 +6,7 @@ import { authRoutes } from "./modules/auth/auth.route";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { notFound } from "./middleware/notFound";
 import { categoriesRoutes } from "./modules/categories/categories.route";
+import { gearRoutes } from "./modules/gearItem/gearItem.route";
 
 const app: Application = express();
 
@@ -28,6 +29,7 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/categories", categoriesRoutes);
 
+app.use("/api/provider", gearRoutes);
 
 app.use(notFound);
 app.use(globalErrorHandler);
