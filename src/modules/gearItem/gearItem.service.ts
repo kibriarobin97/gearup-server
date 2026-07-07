@@ -1,6 +1,10 @@
 import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
-import { ICreateGearPayload, IGearQuery } from "./gearItem.interface";
+import {
+  ICreateGearPayload,
+  IGearQuery,
+  IUpdateGearPayload,
+} from "./gearItem.interface";
 
 const createGear = async (providerId: string, payload: ICreateGearPayload) => {
   const category = await prisma.category.findUnique({
@@ -143,8 +147,8 @@ const getSingleGear = async (gearId: string) => {
     include: {
       category: {
         select: {
-            name: true
-        }
+          name: true,
+        },
       },
       provider: {
         select: {
@@ -163,8 +167,59 @@ const getSingleGear = async (gearId: string) => {
   return gear;
 };
 
+const updateGear = async (
+  gearId: string,
+  providerId: string,
+  payload: IUpdateGearPayload,
+) => {
+  const gear = await prisma.gearItem.findUnique({
+    where: { id: gearId },
+  });
+
+  if (!gear) {
+    throw new Error("Gear not found");
+  }
+
+  if (gear.providerId !== providerId) {
+    throw new Error("You can only update your own gear");
+  }
+
+  const updateGear: any = { ...payload };
+  if (payload.totalStock !== undefined) {
+    const stockDifference = payload.totalStock - gear.totalStock;
+    const newAvailableCount = gear.availableCount + stockDifference;
+
+    if (newAvailableCount < 0) {
+      throw new Error("Cannot reduce stock below currently rented quantity");
+    }
+
+    updateGear.availableCount = newAvailableCount;
+  }
+
+  if (payload.categoryId) {
+    const category = await prisma.category.findUnique({
+      where: { id: payload.categoryId },
+    });
+
+    if (!category) {
+      throw new Error("This category is not available");
+    }
+  }
+
+  const result = await prisma.gearItem.update({
+    where: { id: gearId },
+    data: updateGear,
+    include: {
+      category: true,
+    },
+  });
+
+  return result;
+};
+
 export const gearService = {
   createGear,
   getAllGear,
   getSingleGear,
+  updateGear
 };

@@ -44,8 +44,24 @@ const getSingleGear = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateGear = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const providerId = req.user!.id;
+  const payload = req.body;
+
+  const result = await gearService.updateGear(id as string, providerId, payload);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Gear updated successfully",
+    data: result,
+  });
+});
+
 export const gearController = {
   createGear,
   getAllGear,
   getSingleGear,
+  updateGear,
 };
