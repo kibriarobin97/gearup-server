@@ -11,15 +11,22 @@ router.post(
   rentalOrderController.createRentalOrder,
 );
 
-router.get("/", auth("CUSTOMER"), rentalOrderController.getMyRentalOrders);
+router.get(
+  "/",
+  auth(UserRole.CUSTOMER),
+  rentalOrderController.getMyRentalOrders,
+);
 
-router.get("/orders", auth("PROVIDER"), rentalOrderController.getProviderOrders);
+router.get(
+  "/orders",
+  auth(UserRole.PROVIDER),
+  rentalOrderController.getProviderOrders,
+);
 
 router.get(
   "/:id",
-  auth("CUSTOMER", "PROVIDER", "ADMIN"),
+  auth(UserRole.CUSTOMER, UserRole.PROVIDER, UserRole.ADMIN),
   rentalOrderController.getRentalOrderById,
 );
-
 
 export const rentalOrderRoutes = router;

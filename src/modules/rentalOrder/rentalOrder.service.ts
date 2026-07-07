@@ -125,18 +125,16 @@ const getRentalOrderById = async (
   const isOwnerCustomer = order.customerId === userId;
   const isOwnerProvider = order.gear.providerId === userId;
 
-  if (userRole === "ADMIN") {
-  } else if (!isOwnerCustomer && !isOwnerProvider) {
+  const isAdmin = userRole === "ADMIN";
+
+  if (!isAdmin && !isOwnerCustomer && !isOwnerProvider) {
     throw new Error("You are not allowed to access this order");
   }
 
   return order;
 };
 
-const getProviderOrders = async (
-  providerId: string
-) => {
-
+const getProviderOrders = async (providerId: string) => {
   const orders = await prisma.rentalOrder.findMany({
     where: {
       gear: {
