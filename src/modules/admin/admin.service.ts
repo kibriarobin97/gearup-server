@@ -39,7 +39,29 @@ const updateUserStatus = async (
   return updatedUser;
 };
 
+const getAllGear = async () => {
+  const gears = await prisma.gearItem.findMany({
+    include: {
+      category: true,
+      provider: {
+        select: { id: true, name: true, email: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const totalGear = await prisma.gearItem.count();
+
+  return {
+    data: gears,
+    meta: {
+      total: totalGear,
+    },
+  };
+};
+
 export const adminService = {
   getAllUsers,
   updateUserStatus,
+  getAllGear,
 };
