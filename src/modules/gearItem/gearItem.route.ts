@@ -9,4 +9,6 @@ router.post("/", auth(UserRole.PROVIDER), gearController.createGear);
 
 router.get("/", gearController.getAllGear);
 
+router.get("/:id", gearController.getSingleGear);
+
 export const gearRoutes = router;
