@@ -13,4 +13,6 @@ router.get("/:id", gearController.getSingleGear);
 
 router.patch("/:id", auth(UserRole.PROVIDER), gearController.updateGear);
 
+router.delete("/:id", auth(UserRole.PROVIDER), gearController.deleteGear);
+
 export const gearRoutes = router;

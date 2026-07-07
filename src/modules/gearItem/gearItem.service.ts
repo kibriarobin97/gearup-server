@@ -217,9 +217,30 @@ const updateGear = async (
   return result;
 };
 
+const deleteGear = async (gearId: string, providerId: string) => {
+  const gear = await prisma.gearItem.findUnique({
+    where: { id: gearId },
+  });
+
+  if (!gear) {
+    throw new Error("Gear not found");
+  }
+
+  if (gear.providerId !== providerId) {
+    throw new Error("You can only delete your own gear");
+  }
+
+  await prisma.gearItem.delete({
+    where: { id: gearId },
+  });
+
+  return null;
+};
+
 export const gearService = {
   createGear,
   getAllGear,
   getSingleGear,
-  updateGear
+  updateGear,
+  deleteGear,
 };
