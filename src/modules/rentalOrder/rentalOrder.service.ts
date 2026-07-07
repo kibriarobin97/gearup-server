@@ -1,3 +1,4 @@
+import { UserRole } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { ICreateRentalOrderPayload } from "./rentalOrder.interface";
 
@@ -88,7 +89,52 @@ const getMyRentalOrders = async (customerId: string) => {
   return orders;
 };
 
+const getRentalOrderById = async (
+  orderId: string,
+  userId: string,
+  userRole: UserRole,
+) => {
+  const order = await prisma.rentalOrder.findUnique({
+    where: { id: orderId },
+    include: {
+      customer: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      gear: {
+        include: {
+          provider: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  const isOwnerCustomer = order.customerId === userId;
+  const isOwnerProvider = order.gear.providerId === userId;
+
+  if (userRole === "ADMIN") {
+  } else if (!isOwnerCustomer && !isOwnerProvider) {
+    throw new Error("You are not allowed to access this order");
+  }
+
+  return order;
+};
+
 export const rentalOrderService = {
   createRentalOrder,
-  getMyRentalOrders
+  getMyRentalOrders,
+  getRentalOrderById,
 };
