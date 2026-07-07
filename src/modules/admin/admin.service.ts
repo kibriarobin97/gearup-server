@@ -9,7 +9,14 @@ const getAllUsers = async () => {
     orderBy: { createdAt: "desc" },
   });
 
-  return users;
+  const totalUsers = await prisma.user.count();
+
+  return {
+    data: users,
+    meta: {
+      total: totalUsers,
+    },
+  };
 };
 
 const updateUserStatus = async (
@@ -60,8 +67,39 @@ const getAllGear = async () => {
   };
 };
 
+const getAllRentalOrders = async () => {
+  const orders = await prisma.rentalOrder.findMany({
+    include: {
+      customer: {
+        select: { id: true, name: true, email: true },
+      },
+      gear: {
+        select: {
+          id: true,
+          name: true,
+          pricePerDay: true,
+          provider: {
+            select: { id: true, name: true, email: true },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const totalOrders = await prisma.rentalOrder.count();
+
+  return {
+    data: orders,
+    meta: {
+      total: totalOrders,
+    },
+  };
+};
+
 export const adminService = {
   getAllUsers,
   updateUserStatus,
   getAllGear,
+  getAllRentalOrders,
 };

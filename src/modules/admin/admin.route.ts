@@ -9,6 +9,12 @@ router.get("/users", auth(UserRole.ADMIN), adminController.getAllUsers);
 
 router.get("/gears", auth(UserRole.ADMIN), adminController.getAllGear);
 
+router.get(
+  "/orders",
+  auth(UserRole.ADMIN),
+  adminController.getAllRentalOrders,
+);
+
 router.patch(
   "/users/:id",
   auth(UserRole.ADMIN),

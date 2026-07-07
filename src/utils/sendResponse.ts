@@ -9,11 +9,12 @@ type TResponseData<T> = {
 };
 
 type TMeta = {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
+  page?: number;
+  limit?: number;
+  total?: number;
+  totalPages?: number;
 };
+
 
 export const sendResponse = <T>(res: Response, data: TResponseData<T>) => {
   res.status(data.statusCode).json({

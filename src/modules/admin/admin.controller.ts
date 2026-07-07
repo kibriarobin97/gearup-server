@@ -36,7 +36,20 @@ const getAllGear = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: httpStatus.OK,
     message: "Gear items fetched successfully",
-    data: result,
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
+const getAllRentalOrders = catchAsync(async (req: Request, res: Response) => {
+  const result = await adminService.getAllRentalOrders();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Rental orders fetched successfully",
+    data: result.data,
+    meta: result.meta,
   });
 });
 
@@ -44,4 +57,5 @@ export const adminController = {
   getAllUsers,
   updateUserStatus,
   getAllGear,
+  getAllRentalOrders,
 };
