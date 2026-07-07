@@ -29,7 +29,7 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/categories", categoriesRoutes);
 
-app.use("/api/provider", gearRoutes);
+app.use("/api/gear", gearRoutes);
 
 app.use(notFound);
 app.use(globalErrorHandler);

@@ -12,6 +12,7 @@ type TMeta = {
   page: number;
   limit: number;
   total: number;
+  totalPages: number;
 };
 
 export const sendResponse = <T>(res: Response, data: TResponseData<T>) => {
