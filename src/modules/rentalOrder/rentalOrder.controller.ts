@@ -66,9 +66,31 @@ const getProviderOrders = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateOrderStatus = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const userId = req.user?.id;
+  const userRole = req.user?.role;
+  const payload = req.body;
+
+  const result = await rentalOrderService.updateOrderStatus(
+    id as string,
+    userId as string,
+    userRole as UserRole,
+    payload,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Order status updated successfully",
+    data: result,
+  });
+});
+
 export const rentalOrderController = {
   createRentalOrder,
   getMyRentalOrders,
   getRentalOrderById,
   getProviderOrders,
+  updateOrderStatus,
 };

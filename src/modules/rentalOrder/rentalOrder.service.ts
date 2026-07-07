@@ -1,6 +1,9 @@
 import { UserRole } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
-import { ICreateRentalOrderPayload } from "./rentalOrder.interface";
+import {
+  ICreateRentalOrderPayload,
+  IUpdateOrderStatusPayload,
+} from "./rentalOrder.interface";
 
 const createRentalOrder = async (
   customerId: string,
@@ -159,9 +162,82 @@ const getProviderOrders = async (providerId: string) => {
   return orders;
 };
 
+const validTransitions: Record<string, string[]> = {
+  PLACED: ["CONFIRMED", "CANCELLED"],
+  CONFIRMED: ["PICKED_UP"],
+  PICKED_UP: ["RETURNED"],
+};
+
+const updateOrderStatus = async (
+  orderId: string,
+  userId: string,
+  userRole: UserRole,
+  payload: IUpdateOrderStatusPayload,
+) => {
+  const newStatus = payload.status;
+
+  const order = await prisma.rentalOrder.findUnique({
+    where: { id: orderId },
+    include: { gear: true },
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  const currentStatus = order.status;
+
+  const isOwnerProvider = order.gear.providerId === userId;
+  const isOwnerCustomer = order.customerId === userId;
+
+  if (!isOwnerProvider && !isOwnerCustomer) {
+    throw new Error("You are not allowed to update this order");
+  }
+
+  if (newStatus === "CANCELLED" && userRole !== "CUSTOMER") {
+    throw new Error("Only the customer can cancel an order");
+  }
+
+  if (
+    ["CONFIRMED", "PICKED_UP", "RETURNED"].includes(newStatus) &&
+    userRole !== "PROVIDER"
+  ) {
+    throw new Error("Only the provider can update this status");
+  }
+
+  const allowedNextSteps = validTransitions[currentStatus] || [];
+
+  if (!allowedNextSteps.includes(newStatus)) {
+    throw new Error(
+      `Cannot change status from ${currentStatus} to ${newStatus}`,
+    );
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    const updatedOrder = await tx.rentalOrder.update({
+      where: { id: orderId },
+      data: { status: newStatus },
+    });
+
+    if (newStatus === "CANCELLED" || newStatus === "RETURNED") {
+      await tx.gearItem.update({
+        where: { id: order.gearId },
+        data: {
+          availableCount: { increment: order.quantity },
+        },
+      });
+    }
+
+    return updatedOrder;
+  });
+
+  return result;
+};
+
 export const rentalOrderService = {
   createRentalOrder,
   getMyRentalOrders,
   getRentalOrderById,
   getProviderOrders,
+  updateOrderStatus,
 };
