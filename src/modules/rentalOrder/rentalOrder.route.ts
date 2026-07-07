@@ -13,10 +13,13 @@ router.post(
 
 router.get("/", auth("CUSTOMER"), rentalOrderController.getMyRentalOrders);
 
+router.get("/orders", auth("PROVIDER"), rentalOrderController.getProviderOrders);
+
 router.get(
   "/:id",
   auth("CUSTOMER", "PROVIDER", "ADMIN"),
   rentalOrderController.getRentalOrderById,
 );
+
 
 export const rentalOrderRoutes = router;
