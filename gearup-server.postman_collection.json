@@ -1,0 +1,866 @@
+{
+  "info": {
+    "_postman_id": "590aff30-57d9-474a-befb-fabd5ffff7c6",
+    "name": "gearup-server",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54683157",
+    "_collection_link": "https://go.postman.co/collection/54683157-590aff30-57d9-474a-befb-fabd5ffff7c6?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "register user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"rahi\",\r\n  \"email\": \"rahi@gmail.com\",\r\n  \"password\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/auth/register",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"rahat@gmail.com\",\r\n    \"password\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/auth/login",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get my profile",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"rifat@gmail.com\",\r\n    \"password\": \"12345\"\r\n}"
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/auth/me",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "category",
+      "item": [
+        {
+          "name": "create category",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"name\": \"Water Sports\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/categories",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/categories",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update category",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"name\": \"cricket\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/categories/0412eea2-ab49-40bf-868e-1d25f23ccb9f",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "0412eea2-ab49-40bf-868e-1d25f23ccb9f"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete category",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"name\": \"Water Sports\"\r\n}"
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/categories/0412eea2-ab49-40bf-868e-1d25f23ccb9f",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "0412eea2-ab49-40bf-868e-1d25f23ccb9f"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "gear items",
+      "item": [
+        {
+          "name": "create gear item",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"\",\r\n    \"description\": \"test\",\r\n    \"pricePerDay\": -5,\r\n    \"categoryId\": \"abc\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/gear",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "gear"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all gear",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/gear",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "gear"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Water Sports",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "brand",
+                  "value": "Intex",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "1000",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "300",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "searchItem",
+                  "value": "kayak",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "pricePerDay",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get single gear",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/gear/1db154da-5a89-4567-bcc8-d663401d3b20",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "gear",
+                "1db154da-5a89-4567-bcc8-d663401d3b20"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update gear",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"totalStock\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/gear/8577b1a6-a0e4-4ef7-9295-bdaa83efab94",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "gear",
+                "8577b1a6-a0e4-4ef7-9295-bdaa83efab94"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete gear",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/gear/95718900-a25e-41d7-8faf-52d74719cad9",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "gear",
+                "95718900-a25e-41d7-8faf-52d74719cad9"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "rental order",
+      "item": [
+        {
+          "name": "create rental order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"gearId\": \"8577b1a6-a0e4-4ef7-9295-bdaa83efab94\",\r\n  \"startTime\": \"2026-07-11T10:00:00.000Z\",\r\n  \"endTime\": \"2026-07-13T10:00:00.000Z\",\r\n  \"quantity\": 2\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/rentals",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get my rental order",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/rentals",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get rental order by order id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/rentals/0b9300bf-52a9-4ddc-9719-8fd67087c2a1",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals",
+                "0b9300bf-52a9-4ddc-9719-8fd67087c2a1"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Water Sports",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "brand",
+                  "value": "Intex",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "1000",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "300",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "searchItem",
+                  "value": "kayak",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "pricePerDay",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get provider orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/rentals/orders",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update order status",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"RETURNED\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/rentals/30eddd84-3ad8-4dc3-be3e-48c80c9d361c/status",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals",
+                "30eddd84-3ad8-4dc3-be3e-48c80c9d361c",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "admin route",
+      "item": [
+        {
+          "name": "get all users",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"rifat@gmail.com\",\r\n    \"password\": \"12345\"\r\n}"
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/admin/users",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update user status",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"ACTIVE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/admin/users/39912de5-ce46-43f5-b0f9-e6c005b6d366",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "39912de5-ce46-43f5-b0f9-e6c005b6d366"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all gears",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"rifat@gmail.com\",\r\n    \"password\": \"12345\"\r\n}"
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/admin/gears",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "gears"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all rental orders",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"rifat@gmail.com\",\r\n    \"password\": \"12345\"\r\n}"
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/admin/orders",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "payment",
+      "item": [
+        {
+          "name": "create payment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/payments/create",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get payment history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/payments",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "payments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get payment details",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rentalOrderId\": \"30eddd84-3ad8-4dc3-be3e-48c80c9d361c\"\r\n}"
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/payments/ba1208a7-3639-4987-96df-1adae882657e",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "ba1208a7-3639-4987-96df-1adae882657e"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "review",
+      "item": [
+        {
+          "name": "create review",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"gearId\": \"1db154da-5a89-4567-bcc8-d663401d3b20\",\r\n  \"comment\": \"Great experience, highly recommend!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/reviews",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get review",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://gearup-server-mocha.vercel.app/api/reviews/1db154da-5a89-4567-bcc8-d663401d3b20",
+              "protocol": "https",
+              "host": [
+                "gearup-server-mocha",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "reviews",
+                "1db154da-5a89-4567-bcc8-d663401d3b20"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
