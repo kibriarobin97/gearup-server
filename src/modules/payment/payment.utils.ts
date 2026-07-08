@@ -1,5 +1,7 @@
 import axios from "axios";
 import config from "../../config";
+import qs from "qs";
+
 
 const SSL_BASE_URL = config.SSLCOMMERZ_IS_LIVE
   ? "https://securepay.sslcommerz.com"
@@ -36,12 +38,13 @@ const initiatePayment = async (paymentData: {
   const response = await axios({
     method: "POST",
     url: `${SSL_BASE_URL}/gwprocess/v4/api.php`,
-    data,
+    data: qs.stringify(data),
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
   });
-
   return response.data;
 };
+
+
 
 const validatePayment = async (val_id: string) => {
   const response = await axios.get(
@@ -59,7 +62,7 @@ const validatePayment = async (val_id: string) => {
   return response.data;
 };
 
-export const sslcommerzUtils = {
+export const sslCommerzUtils = {
   initiatePayment,
   validatePayment,
 };

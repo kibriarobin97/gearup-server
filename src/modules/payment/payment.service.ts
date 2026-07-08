@@ -1,7 +1,8 @@
 import { prisma } from "../../lib/prisma";
-import { sslcommerzUtils } from "./payment.utils";
 import { ICreatePaymentPayload } from "./payment.interface";
 import { v4 as uuidv4 } from "uuid";
+import { OrderStatus, PaymentStatus } from "../../../generated/prisma/enums";
+import { sslCommerzUtils } from "./payment.utils";
 
 const createPayment = async (
   customerId: string,
@@ -32,13 +33,12 @@ const createPayment = async (
     data: {
       transactionId,
       amount: order.totalPrice,
-      method: "SSLCOMMERZ",
       status: "PENDING",
       rentalOrderId: order.id,
     },
   });
 
-  const sslResponse = await sslcommerzUtils.initiatePayment({
+  const sslResponse = await sslCommerzUtils.initiatePayment({
     amount: order.totalPrice,
     transactionId,
     customerName: order.customer.name,
@@ -50,8 +50,24 @@ const createPayment = async (
   };
 };
 
-const confirmPayment = async (transactionId: string, val_id: string) => {
-  const validation = await sslcommerzUtils.validatePayment(val_id);
+const confirmPayment = async (transactionId: string, valId: string) => {
+     console.log("Confirm payment input:", {
+    transactionId,
+    valId,
+  });
+  console.log("tranId:", transactionId);
+console.log("valId:", valId);
+
+  console.log("Before validatePayment");
+
+const validation = await sslCommerzUtils.validatePayment(valId);
+
+console.log("Validation:", validation);
+
+    console.log("SSLCommerz validation full response:", validation);
+  console.log("Validation status:", validation.status);
+  console.log("Transaction ID from SSL:", validation.tran_id);
+
 
   if (validation.status !== "VALID" && validation.status !== "VALIDATED") {
     throw new Error("Payment validation failed");
@@ -69,14 +85,14 @@ const confirmPayment = async (transactionId: string, val_id: string) => {
     const updatedPayment = await tx.payment.update({
       where: { transactionId },
       data: {
-        status: "COMPLETED",
+        status: PaymentStatus.COMPLETED,
         paidAt: new Date(),
       },
     });
 
     await tx.rentalOrder.update({
       where: { id: payment.rentalOrderId },
-      data: { status: "PAID" },
+      data: { status: OrderStatus.PAID},
     });
 
     return updatedPayment;

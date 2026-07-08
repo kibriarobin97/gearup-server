@@ -17,11 +17,29 @@ const createPayment = catchAsync(async (req: Request, res: Response) => {
 });
 
 const confirmPayment = catchAsync(async (req: Request, res: Response) => {
-  const { tran_id, val_id } = req.body;
+  console.log("SSLCommerz callback:", {
+    method: req.method,
+    body: req.body,
+    query: req.query,
+  });
 
-  await paymentService.confirmPayment(tran_id, val_id);
+  const tranId = (req.body?.tran_id || req.query?.tran_id) as string;
+  const valId = (req.body?.val_id || req.query?.val_id) as string;
 
-  res.status(httpStatus.OK).json({
+  if (!tranId || !valId) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "SSLCommerz callback data missing: tran_id or val_id",
+      data: {
+        body: req.body,
+        query: req.query,
+      },
+    });
+  }
+
+  await paymentService.confirmPayment(tranId, valId);
+
+  return res.status(httpStatus.OK).json({
     success: true,
     message: "Payment completed successfully",
   });

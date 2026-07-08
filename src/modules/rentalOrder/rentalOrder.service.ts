@@ -164,7 +164,8 @@ const getProviderOrders = async (providerId: string) => {
 
 const validTransitions: Record<string, string[]> = {
   PLACED: ["CONFIRMED", "CANCELLED"],
-  CONFIRMED: ["PICKED_UP"],
+  CONFIRMED: [],
+  PAID: ["PICKED_UP"],
   PICKED_UP: ["RETURNED"],
 };
 
