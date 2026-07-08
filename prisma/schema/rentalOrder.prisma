@@ -11,6 +11,8 @@ model RentalOrder {
     totalPrice Int
     status     OrderStatus @default(PLACED)
 
+    payment Payment[]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
