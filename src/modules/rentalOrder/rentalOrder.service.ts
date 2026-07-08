@@ -1,5 +1,6 @@
 import { UserRole } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
+import { validateRentalOrder } from "../../utils/validate";
 import {
   ICreateRentalOrderPayload,
   IUpdateOrderStatusPayload,
@@ -9,6 +10,11 @@ const createRentalOrder = async (
   customerId: string,
   payload: ICreateRentalOrderPayload,
 ) => {
+  const validationError = validateRentalOrder(payload);
+  if (validationError) {
+    throw new Error(validationError);
+  }
+
   const { gearId, startTime, endTime, quantity } = payload;
 
   const start = new Date(startTime);

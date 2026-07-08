@@ -1,5 +1,6 @@
 import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
+import { validateGear } from "../../utils/validate";
 import {
   ICreateGearPayload,
   IGearQuery,
@@ -7,6 +8,11 @@ import {
 } from "./gearItem.interface";
 
 const createGear = async (providerId: string, payload: ICreateGearPayload) => {
+  const validationError = validateGear(payload);
+  if (validationError) {
+    throw new Error(validationError);
+  }
+
   const category = await prisma.category.findUnique({
     where: { id: payload.categoryId },
   });

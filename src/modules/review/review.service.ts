@@ -1,11 +1,17 @@
 import { OrderStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
+import { validateReview } from "../../utils/validate";
 import { ICreateReviewPayload } from "./review.interface";
 
 const createReview = async (
   customerId: string,
   payload: ICreateReviewPayload,
 ) => {
+  const validationError = validateReview(payload);
+  if (validationError) {
+    throw new Error(validationError);
+  }
+
   const { gearId, comment } = payload;
 
   const returnedOrder = await prisma.rentalOrder.findFirst({

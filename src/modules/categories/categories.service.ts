@@ -1,10 +1,16 @@
 import { prisma } from "../../lib/prisma";
+import { validateCategory } from "../../utils/validate";
 
 type TCategory = {
   name: string;
 };
 
 const createCategory = async (payload: TCategory) => {
+  const validationError = validateCategory(payload);
+  if (validationError) {
+    throw new Error(validationError);
+  }
+
   const isExists = await prisma.category.findUnique({
     where: { name: payload.name },
   });
@@ -24,10 +30,7 @@ const getAllCategories = async () => {
   return categories;
 };
 
-const updateCategory = async (
-  categoryId: string,
-  payload: TCategory
-) => {
+const updateCategory = async (categoryId: string, payload: TCategory) => {
   const isExistsCategory = await prisma.category.findUnique({
     where: { id: categoryId },
   });
@@ -35,7 +38,6 @@ const updateCategory = async (
   if (!isExistsCategory) {
     throw new Error("Category not found");
   }
-
 
   const updateCategory = await prisma.category.update({
     where: { id: categoryId },
