@@ -5,7 +5,7 @@ model Payment {
     status        PaymentStatus @default(PENDING)
     paidAt        DateTime?
 
-    meta Json
+    meta Json?
 
     rentalOrderId String
     rentalOrder   RentalOrder @relation(fields: [rentalOrderId], references: [id], onDelete: Cascade)
