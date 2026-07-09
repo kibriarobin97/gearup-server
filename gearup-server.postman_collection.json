@@ -478,62 +478,6 @@
                 "api",
                 "rentals",
                 "0b9300bf-52a9-4ddc-9719-8fd67087c2a1"
-              ],
-              "query": [
-                {
-                  "key": "category",
-                  "value": "Water Sports",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "brand",
-                  "value": "Intex",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "maxPrice",
-                  "value": "1000",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "minPrice",
-                  "value": "300",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "searchItem",
-                  "value": "kayak",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "sortBy",
-                  "value": "pricePerDay",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "sortOrder",
-                  "value": "asc",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "page",
-                  "value": "1",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "limit",
-                  "value": "10",
-                  "type": "text",
-                  "disabled": true
-                }
               ]
             }
           },
