@@ -4,7 +4,8 @@
 A backend REST API for a sports and outdoor equipment rental service. Customers can browse gear, place rental orders, and pay online. Providers manage their inventory and fulfill orders. Admins oversee the entire platform.
 
 **Live API:** https://gearup-server-mocha.vercel.app
-**API Docs:** https://github.com/kibriarobin97/gearup-server/blob/main/gearup-server.postman_collection.json
+
+**API Docs (Postman):** https://github.com/kibriarobin97/gearup-server/blob/main/gearup-server.postman_collection.json
 
 ---
 
@@ -26,23 +27,25 @@ A backend REST API for a sports and outdoor equipment rental service. Customers 
 
 | Role | Description | Key Permissions |
 |------|-------------|-----------------|
-| **Customer** | Users who rent sports gear | Browse gear, place rental orders, make payments, track order status, leave reviews, manage profile |
+| **Customer** | Users who rent sports gear | Browse gear, place rental orders, make payments, track order status, leave reviews |
 | **Provider** | Gear vendors/rental shops | Manage gear inventory, view incoming orders, update order status |
-| **Admin** | Platform moderators | Manage all users, oversee all rentals, manage gear/categories |
+| **Admin** | Platform moderators | View/manage all users, manage categories, view all gear and rentals |
 
-> Users select `CUSTOMER` or `PROVIDER` during registration. `ADMIN` accounts are seeded directly into the database and cannot be created via public registration.
+> Users select `CUSTOMER` or `PROVIDER` during registration — if no role is provided, it defaults to `CUSTOMER`. `ADMIN` accounts cannot be created via public registration (any `ADMIN` value sent is overridden); the admin account is seeded directly into the database.
 
 ---
 
 ## 🔐 Authentication Flow
 
-1. User registers with `name`, `email`, `password`, and optionally `role` (`CUSTOMER` / `PROVIDER`) — if `role` is not provided, it defaults to `CUSTOMER`
-2. Password is hashed with bcrypt before storing
-3. On login, server verifies credentials and issues:
-   - **Access Token** (short-lived, 1 day) — sent as httpOnly cookie + in response body
-   - **Refresh Token** (long-lived, 7 days) — sent as httpOnly cookie only
-4. `POST /api/auth/refresh-token` issues a new access token using a valid refresh token, without requiring the user to log in again
-5. Role-based middleware (`auth("ADMIN")`, `auth("PROVIDER")`, etc.) protects restricted routes
+1. User registers with `name`, `email`, `password`, and optionally `role` (`CUSTOMER` / `PROVIDER`).
+2. Password is hashed with bcrypt before storing.
+3. On login, the server verifies credentials and issues:
+   - **Access Token** (1 day expiry)
+   - **Refresh Token** (7 days expiry)
+
+   Both are set as httpOnly cookies and also returned in the response body.
+4. Role-based middleware (`auth(UserRole.ADMIN)`, `auth(UserRole.PROVIDER)`, etc.) protects restricted routes.
+5. Suspended users (`status: SUSPENDED`) are blocked from logging in and from accessing any protected route, even with a previously issued valid token.
 
 ---
 
@@ -53,70 +56,72 @@ A backend REST API for a sports and outdoor equipment rental service. Customers 
 |--------|----------|--------|-------------|
 | POST | `/api/auth/register` | Public | Register as customer or provider |
 | POST | `/api/auth/login` | Public | Login, returns access + refresh token |
-| POST | `/api/auth/refresh-token` | Public | Get new access token using refresh token |
-| GET | `/api/auth/me` | Authenticated | Get current logged-in user |
+| GET | `/api/auth/me` | Authenticated | Get current logged-in user's profile |
 
-### Gear (Public)
+### Categories
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| GET | `/api/gear` | Public | Get all gear (filter by category, price, brand) |
-| GET | `/api/gear/:id` | Public | Get single gear details |
 | GET | `/api/categories` | Public | Get all gear categories |
+| POST | `/api/categories` | Admin | Create a new category |
+| PATCH | `/api/categories/:id` | Admin | Update a category |
+| DELETE | `/api/categories/:id` | Admin | Delete a category |
+
+### Gear
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | `/api/gear` | Public | Get all gear — supports filtering (`category`, `brand`, `minPrice`, `maxPrice`, `searchItem`), sorting (`sortBy`, `sortOrder`) and pagination (`page`, `limit`) |
+| GET | `/api/gear/:id` | Public | Get single gear details (includes reviews) |
+| POST | `/api/gear` | Provider | Add new gear to inventory |
+| PUT | `/api/gear/:id` | Provider (owner only) | Update own gear listing |
+| DELETE | `/api/gear/:id` | Provider (owner only) | Remove gear from inventory |
 
 ### Rental Orders
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| POST | `/api/rentals` | Customer | Create a new rental order |
+| POST | `/api/rentals` | Customer | Create a new rental order for a gear item |
 | GET | `/api/rentals` | Customer | Get logged-in customer's own orders |
+| GET | `/api/rentals/orders` | Provider | Get incoming orders for the provider's own gear |
 | GET | `/api/rentals/:id` | Customer / Provider / Admin | Get single order details (ownership checked) |
+| PATCH | `/api/rentals/:id/status` | Customer / Provider | Update order status (see status flow below) |
 
 ### Payments (SSLCommerz)
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| POST | `/api/payments/create` | Customer | Initiate payment session for a `CONFIRMED` order |
-| POST | `/api/payments/success` | SSLCommerz callback | Marks payment `COMPLETED` and order `PAID` |
-| POST | `/api/payments/fail` | SSLCommerz callback | Marks payment `FAILED` |
-| POST | `/api/payments/cancel` | SSLCommerz callback | Marks payment `FAILED` / cancelled |
-| GET | `/api/payments` | Customer | Get logged-in user's payment history |
-| GET | `/api/payments/:id` | Customer / Admin | Get single payment details |
-
-### Provider
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| POST | `/api/provider/gear` | Provider | Add new gear to inventory |
-| PUT | `/api/provider/gear/:id` | Provider | Update own gear listing |
-| DELETE | `/api/provider/gear/:id` | Provider | Remove gear from inventory |
-| GET | `/api/provider/orders` | Provider | View incoming orders for own gear |
-| PATCH | `/api/provider/orders/:id` | Provider | Update order status (`CONFIRMED`, `PICKED_UP`, etc.) |
+| POST | `/api/payments/create` | Customer | Initiate an SSLCommerz payment session for a `CONFIRMED` order |
+| POST | `/api/payments/confirm` | SSLCommerz callback | Validates payment with SSLCommerz and marks payment `COMPLETED` + order `PAID` |
+| GET | `/api/payments` | Customer | Get logged-in customer's payment history |
+| GET | `/api/payments/:id` | Customer (owner only) | Get single payment details |
 
 ### Reviews
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| POST | `/api/reviews` | Customer | Leave a review after gear is returned |
+| POST | `/api/reviews` | Customer | Leave a review for gear that has been rented and returned |
 
 ### Admin
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
 | GET | `/api/admin/users` | Admin | View all users |
 | PATCH | `/api/admin/users/:id` | Admin | Suspend / activate a user |
-| GET | `/api/admin/gear` | Admin | View all gear listings |
-| GET | `/api/admin/rentals` | Admin | View all rental orders |
+| GET | `/api/admin/gear` | Admin | View all gear listings (with total count) |
+| GET | `/api/admin/rentals` | Admin | View all rental orders (with total count) |
 
 ---
 
 ## 🗃️ Database Schema (Prisma)
 
-**Users** — id, name, email, password (hashed), phone, role (`CUSTOMER`/`PROVIDER`/`ADMIN`), status (`ACTIVE`/`SUSPENDED`)
+**User** — `id`, `name`, `email`, `password` (hashed), `phone`, `role` (`CUSTOMER` / `PROVIDER` / `ADMIN`), `status` (`ACTIVE` / `SUSPENDED`)
 
-**GearItem** — id, name, description, pricePerDay, brand, model, totalStock, availableCount, categoryId, providerId
+**Profile** — `id`, `bio`, `profilePhoto`, `userId` (1:1 with User)
 
-**Category** — id, name
+**Category** — `id`, `name`
 
-**RentalOrder** — id, customerId, gearId, startTime, endTime, quantity, totalPrice, status (`PLACED` → `CONFIRMED` → `PAID` → `PICKED_UP` → `RETURNED` / `CANCELLED`)
+**GearItem** — `id`, `name`, `description`, `pricePerDay`, `brand`, `model`, `totalStock`, `availableCount`, `categoryId`, `providerId`
 
-**Payment** — id, transactionId, amount, status (`PENDING`/`COMPLETED`/`FAILED`), rentalOrderId, meta (raw gateway response)
+**RentalOrder** — `id`, `customerId`, `gearId`, `startTime`, `endTime`, `quantity`, `totalPrice`, `status` (`PLACED` / `CONFIRMED` / `PAID` / `PICKED_UP` / `RETURNED` / `CANCELLED`)
 
-**Review** — id, customerId, gearId, rating, comment
+**Payment** — `id`, `transactionId`, `amount`, `method` (`SSLCOMMERZ`), `status` (`PENDING` / `COMPLETED` / `FAILED`), `paidAt`, `rentalOrderId`
+
+**Review** — `id`, `gearId`, `customerId`, `comment`
 
 ---
 
@@ -153,19 +158,22 @@ A backend REST API for a sports and outdoor equipment rental service. Customers 
                     └──────────────┘
 ```
 
-- A customer can only pay for an order once it is `CONFIRMED` by the provider.
-- Cancelling an order restores the gear's `availableCount`.
+- A customer can only pay for an order once it has been `CONFIRMED` by the provider.
+- `CANCELLED` is only allowed from `PLACED`, and only by the customer.
+- Cancelling or returning an order restores the gear's `availableCount`.
+- `PAID` is set automatically by the payment confirmation flow — it cannot be set manually through the order status update endpoint.
 
 ---
 
 ## ✅ Key Implementation Highlights
 
 - **Server-side price calculation** — `totalPrice` is always calculated on the backend (`pricePerDay × quantity × rental days`), never trusted from client input.
-- **Stock management** — `availableCount` is decremented on order creation and restored on cancellation.
-- **Ownership-based access control** — endpoints like `GET /api/rentals/:id` verify the requester is the order's customer, the gear's provider, or an admin before returning data.
-- **Consistent error responses** — all errors return `{ success: false, message, errorDetails }` via a centralized error handler and a custom `ApiError` class.
-- **Input validation** — request `body`/`params`/`query` validated on major endpoints before reaching controllers.
-- **Secure auth** — passwords hashed with bcrypt, JWT access/refresh tokens stored in httpOnly cookies, refresh-token rotation endpoint for silent re-authentication.
+- **Stock management** — `availableCount` is decremented on order creation (using an atomic, race-condition-safe update) and restored on cancellation/return.
+- **Ownership-based access control** — endpoints like `GET /api/rentals/:id` and gear update/delete verify the requester is the resource's owner (customer, provider, or admin) before allowing access.
+- **Status transition guard** — order status updates follow a strict allowed-transition map, preventing invalid jumps (e.g. `PLACED` → `RETURNED` directly).
+- **Consistent error responses** — all errors return `{ success: false, message, errorDetails }` via a centralized error handler, covering Prisma errors and application errors alike.
+- **Input validation** — key write endpoints (register, login, category, gear, rental order, payment, review) validate required fields before reaching the database layer.
+- **Secure auth** — passwords hashed with bcrypt, JWT access/refresh tokens stored in httpOnly cookies, suspended accounts are blocked at both login and on every subsequent authenticated request.
 
 ---
 
@@ -181,20 +189,35 @@ npx prisma generate
 # run migrations
 npx prisma migrate dev
 
-# seed admin user (and categories/sample data if applicable)
-npx prisma db seed
-
 # start development server
 npm run dev
+```
+
+### Environment Variables (`.env`)
+
+```env
+NODE_ENV=development
+PORT=5000
+DATABASE_URL=
+
+JWT_ACCESS_SECRET=
+JWT_REFRESH_SECRET=
+JWT_ACCESS_EXPIRATION=1d
+JWT_REFRESH_EXPIRATION=7d
+
+BCRYPT_SALT_ROUNDS=10
+
+SSLCOMMERZ_STORE_ID=
+SSLCOMMERZ_STORE_PASSWORD=
 ```
 
 ---
 
 ## 🧪 Testing
 
-All endpoints tested via Postman. Collection covers:
-- Customer flow (register → login → browse gear → place order → pay → review)
-- Provider flow (register → login → add gear → confirm/update orders)
-- Admin flow (view users → suspend user → view all rentals)
+All endpoints were tested via Postman. The published collection covers:
+- **Customer flow** — register → login → browse/filter gear → place order → pay via SSLCommerz → track status → leave a review
+- **Provider flow** — register → login → add gear → view incoming orders → confirm/pick-up/return orders
+- **Admin flow** — login → view all users → suspend/activate a user → view all gear and rentals
 
-See API Documentation link above for the full Postman collection.
+See the API Documentation link above for the full Postman collection.
